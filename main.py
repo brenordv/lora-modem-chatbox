@@ -12,7 +12,7 @@ Examples:
 """
 
 import sys
-from src.chatbox_app import ModernChatApp
+from src.chatbox_app import ChatBox
 
 
 def main():
@@ -52,7 +52,7 @@ def main():
     print()
     
     try:
-        app = ModernChatApp(username=username, port=port)
+        app = ChatBox(username=username, port=port)
         app.run()
     except KeyboardInterrupt:
         print("\nShutting down...")

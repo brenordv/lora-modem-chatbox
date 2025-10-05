@@ -63,7 +63,7 @@ class MessageProtocol:
             return None
 
 
-class ModernChatApp:
+class ChatBox:
     def __init__(self, username: str, port: Optional[str] = None):
         self.username = username
         self.port = port
@@ -87,17 +87,17 @@ class ModernChatApp:
         self.send_button: Optional[ttk.Button] = None
         self.status_label: Optional[tk.Label] = None
 
-        # Colors for modern UI
+        # Colors for UI
         self.colors = {
             "bg": "#1e1e1e",
             "fg": "#ffffff",
             "chat_bg": "#2d2d2d",
             "input_bg": "#3c3c3c",
-            "own_msg": "#0078d4",
-            "other_msg": "#3a3a3a",
-            "ack": "#00ff00",
-            "pending": "#ffaa00",
-            "system": "#888888"
+            "own_msg": "#004a99",
+            "other_msg": "#3e3e3e",
+            "ack": "#4caf50",
+            "pending": "#ff9800",
+            "system": "#999999"
         }
 
     def run(self):
@@ -107,7 +107,7 @@ class ModernChatApp:
         self.asyncio_thread = threading.Thread(target=self._run_asyncio_loop, daemon=True)
         self.asyncio_thread.start()
 
-        # Wait for loop to be ready
+        # Wait for the loop to be ready
         while self.loop is None:
             threading.Event().wait(0.01)
 
@@ -185,7 +185,7 @@ class ModernChatApp:
             if username == self.username:
                 return
 
-            # Create and display message
+            # Create and display a message
             msg = ChatMessage(msg_id, username, content, timestamp, is_own=False)
             self.messages[msg_id] = msg
             self._display_message(msg)
@@ -270,49 +270,85 @@ class ModernChatApp:
         self.chat_display = scrolledtext.ScrolledText(chat_frame,
                                                       bg=self.colors["chat_bg"],
                                                       fg=self.colors["fg"],
-                                                      font=('Segoe UI', 10),
+                                                      font=('Segoe UI', 11),
                                                       wrap=tk.WORD,
                                                       borderwidth=0,
                                                       highlightthickness=0,
-                                                      padx=10,
-                                                      pady=10,
-                                                      state=tk.DISABLED)
+                                                      padx=15,
+                                                      pady=15,
+                                                      state=tk.DISABLED,
+                                                      selectbackground="#555555")
         self.chat_display.pack(fill=tk.BOTH, expand=True)
 
-        # Configure text tags for styling
+        # Configure text tags for styling with improved visual design
+        # Clean text-based approach without background colors
         self.chat_display.tag_config("own",
-                                     background=self.colors["own_msg"],
-                                     foreground=self.colors["fg"],
-                                     spacing1=5,
-                                     spacing3=5,
-                                     lmargin1=100,
-                                     rmargin=10,
-                                     wrap=tk.WORD)
+                                     foreground="#b0b0b0",  # Light gray for own messages
+                                     font=('Segoe UI', 11),
+                                     spacing1=10,
+                                     spacing3=10,
+                                     lmargin1=15,
+                                     lmargin2=15,
+                                     rmargin=15,
+                                     wrap=tk.WORD,
+                                     justify=tk.RIGHT)
         self.chat_display.tag_config("other",
-                                     background=self.colors["other_msg"],
-                                     foreground=self.colors["fg"],
-                                     spacing1=5,
-                                     spacing3=5,
-                                     lmargin1=10,
-                                     lmargin2=10,
-                                     rmargin=100,
-                                     wrap=tk.WORD)
-        self.chat_display.tag_config("username",
-                                     foreground="#aaaaaa",
-                                     font=('Segoe UI', 9, 'bold'))
-        self.chat_display.tag_config("timestamp",
-                                     foreground=self.colors["system"],
-                                     font=('Segoe UI', 8))
+                                     foreground=self.colors["fg"],  # White for other messages
+                                     font=('Segoe UI', 11),
+                                     spacing1=10,
+                                     spacing3=10,
+                                     lmargin1=15,
+                                     lmargin2=15,
+                                     rmargin=15,
+                                     wrap=tk.WORD,
+                                     justify=tk.LEFT)
+        self.chat_display.tag_config("username_own",
+                                     foreground="#b8d4ff",
+                                     font=('Segoe UI', 9, 'bold'),
+                                     spacing1=3,
+                                     lmargin1=15,
+                                     rmargin=15,
+                                     justify=tk.RIGHT)
+        self.chat_display.tag_config("username_other",
+                                     foreground="#aaccff",
+                                     font=('Segoe UI', 9, 'bold'),
+                                     spacing1=3,
+                                     lmargin1=15,
+                                     rmargin=15)
+        self.chat_display.tag_config("timestamp_own",
+                                     foreground="#888888",
+                                     font=('Segoe UI', 8),
+                                     lmargin1=15,
+                                     rmargin=15,
+                                     justify=tk.RIGHT)
+        self.chat_display.tag_config("timestamp_other",
+                                     foreground="#888888",
+                                     font=('Segoe UI', 8),
+                                     lmargin1=15,
+                                     rmargin=15)
         self.chat_display.tag_config("status",
                                      foreground=self.colors["pending"],
-                                     font=('Segoe UI', 8, 'italic'))
+                                     font=('Segoe UI', 8),
+                                     lmargin1=15,
+                                     rmargin=15,
+                                     spacing3=2,
+                                     justify=tk.RIGHT)
         self.chat_display.tag_config("status_ack",
                                      foreground=self.colors["ack"],
-                                     font=('Segoe UI', 8, 'italic'))
+                                     font=('Segoe UI', 8),
+                                     lmargin1=15,
+                                     rmargin=15,
+                                     spacing3=2,
+                                     justify=tk.RIGHT)
         self.chat_display.tag_config("system",
                                      foreground=self.colors["system"],
                                      font=('Segoe UI', 9, 'italic'),
-                                     justify=tk.CENTER)
+                                     justify=tk.CENTER,
+                                     spacing1=2,
+                                     spacing3=2)
+        self.chat_display.tag_config("separator",
+                                     foreground=self.colors["chat_bg"],
+                                     font=('Segoe UI', 3))
 
         # Input area
         input_frame = tk.Frame(self.root, bg=self.colors["bg"], height=80)
@@ -342,8 +378,7 @@ class ModernChatApp:
         self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
 
         # Welcome message
-        self._display_system_message(f"Welcome to LoRa Chat, {self.username}!")
-        self._display_system_message("Connecting to LoRa modem...")
+        self._display_system_message(f"Welcome to Off-grid Chat, {self.username}!")
 
     def _send_message(self):
         """Handle send button click."""
@@ -354,7 +389,7 @@ class ModernChatApp:
         # Clear input
         self.message_entry.delete(0, tk.END)
 
-        # Create message
+        # Create a message
         msg_id, payload = MessageProtocol.create_chat_message(self.username, content)
         msg = ChatMessage(msg_id, self.username, content, datetime.now().timestamp(), is_own=True)
         self.messages[msg_id] = msg
@@ -368,7 +403,7 @@ class ModernChatApp:
             asyncio.run_coroutine_threadsafe(self._send_lora_message(payload), self.loop)
 
     async def _send_lora_message(self, payload: str):
-        """Send message via LoRa."""
+        """Send a message via LoRa."""
         if not self.lora_client:
             self._update_status("Not connected to LoRa", "error")
             return
@@ -379,42 +414,54 @@ class ModernChatApp:
             self._update_status(f"Send Error: {e}", "error")
 
     def _display_message(self, msg: ChatMessage):
-        """Display a message in the chat window."""
+        """Display a message in the chat window with clean text-based styling."""
         if not self.chat_display:
             return
 
         def _update():
             self.chat_display.config(state=tk.NORMAL)
 
-            # Timestamp
+            # Format timestamp
             time_str = datetime.fromtimestamp(msg.timestamp).strftime("%H:%M")
 
             if msg.is_own:
                 # Own message - right aligned
-                self.chat_display.insert(tk.END, f"\n{time_str}  ", "timestamp")
-                self.chat_display.insert(tk.END, f"{msg.content}  ", "own")
-
-                # Status indicator
-                status_text = " ✓ Sent" if not msg.acknowledged else f" ✓✓ Read"
-                status_tag = "status" if not msg.acknowledged else "status_ack"
-                self.chat_display.insert(tk.END, status_text, status_tag)
                 self.chat_display.insert(tk.END, "\n")
+                
+                # Username and timestamp header (right aligned)
+                self.chat_display.insert(tk.END, f"You · {time_str}\n", "username_own")
+                
+                # Message text (right-aligned, light-gray)
+                self.chat_display.insert(tk.END, f"{msg.content}\n", "own")
+                
+                # Status indicator (right aligned)
+                if msg.acknowledged:
+                    status_text = "✓✓ Read"
+                    status_tag = "status_ack"
+                else:
+                    status_text = "✓ Sent"
+                    status_tag = "status"
+                self.chat_display.insert(tk.END, f"{status_text}\n", status_tag)
+                
             else:
                 # Other's message - left aligned
-                self.chat_display.insert(tk.END, f"\n@{msg.username}  ", "username")
-                self.chat_display.insert(tk.END, f"{time_str}\n", "timestamp")
-                self.chat_display.insert(tk.END, f"  {msg.content}  ", "other")
                 self.chat_display.insert(tk.END, "\n")
+                
+                # Username and timestamp header (left aligned)
+                self.chat_display.insert(tk.END, f"@{msg.username} · {time_str}\n", "username_other")
+                
+                # Message text (left-aligned, white)
+                self.chat_display.insert(tk.END, f"{msg.content}\n", "other")
 
             self.chat_display.config(state=tk.DISABLED)
             self.chat_display.see(tk.END)
 
-        # Schedule UI update in main thread
+        # Schedule UI update in the main thread
         if self.root:
             self.root.after(0, _update)
 
     def _update_message_status(self, msg: ChatMessage, ack_username: str):
-        """Update message status when ACK is received."""
+        """Update the message status when ACK is received."""
         if not self.chat_display:
             return
 
@@ -440,13 +487,13 @@ class ModernChatApp:
             self.root.after(0, _update)
 
     def _display_system_message(self, text: str):
-        """Display a system message."""
+        """Display a system message with improved styling."""
         if not self.chat_display:
             return
 
         def _update():
             self.chat_display.config(state=tk.NORMAL)
-            self.chat_display.insert(tk.END, f"\n{text}\n", "system")
+            self.chat_display.insert(tk.END, f"\n─── {text} ───\n", "system")
             self.chat_display.config(state=tk.DISABLED)
             self.chat_display.see(tk.END)
 

@@ -1,9 +1,21 @@
 # LoRa Chat Application
 Simple, realtime chat that relies on LoRa to communicate. So you're using something off-grid, and is able to chat with
-anyone who's in range (and is also using this same application). 
+anyone in range (and is also using this same application). 
 
 I know meshtastic exists, is light-years ahead of this, and is way more robust and feature-rich. 
 However, I wanted to make something simple that would work, and I wanted to test my [Raspberry Pi Pico as a USB LoRa modem](https://github.com/brenordv/micropython-snippets/tree/master/pico_lora_sx1262) code.
+
+## How to use
+For this to work you'll need:
+1. A Raspberry Pi Pico
+2. A SX1262 LoRa module (I recommend the [SX1262 LoRa Node Module from Waveshare](https://www.waveshare.com/pico-lora-sx1262-868m.htm))
+3. Install Micropython into the Raspberry Pi Pico
+4. Drop [this](https://github.com/brenordv/micropython-snippets/tree/master/pico_lora_sx1262) code into the Pi Pico.
+5. Connect the Pi Pico to your computer via USB
+6. Run this application
+
+With the recommended components, you should be able to make this work without having to solder anything.
+Also, the that is acting as a LoRa modem can be used for any other purpose.
 
 ## Installation
 Ensure you have Python 3.13+ and install dependencies:
