@@ -237,7 +237,7 @@ class ModernChatApp:
         header_frame.pack_propagate(False)
 
         title_label = tk.Label(header_frame,
-                               text="LoRa Chat",
+                               text="Off-grid Chat",
                                bg=self.colors["own_msg"],
                                fg=self.colors["fg"],
                                font=('Segoe UI', 16, 'bold'))
